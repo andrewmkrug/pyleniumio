@@ -10,6 +10,9 @@ from webdriver_manager.opera import OperaDriverManager
 from selenium.webdriver.edge.options import Options
 from pylenium.config import PyleniumConfig
 
+from saucebindings.options import SauceOptions
+from saucebindings.session import SauceSession
+
 
 class Browser:
     """ ENUM of supported browsers. """

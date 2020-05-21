@@ -15,6 +15,7 @@ faker = "*"
 requests = "*"
 webdriver-manager = "*"
 click = "*"
+saucebindings = "*"
 
 [requires]
 python_version = "3.7"

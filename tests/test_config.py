@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 
@@ -67,3 +69,8 @@ def test_py_config_cli_log_level_info(py_config):
 def test_py_config_cli_log_level_debug(py_config):
     # cli_log_level = 'debug'
     assert py_config.logging.pylog_level == 'debug'
+
+
+def test_sauce_variables():
+    assert os.getenv('SAUCE_USERNAME') == 'carloskidman'
+    assert os.getenv('SAUCE_ACCESS_KEY') is not None
