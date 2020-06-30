@@ -8,7 +8,7 @@ BASE_URL = 'https://deckofcardsapi.com/api/deck'
 
 
 class Deck(BaseModel):
-    success: bool
+    success: bool = Field(..., True)
     deck_id: str
     remaining: int
     shuffled: bool
@@ -16,12 +16,16 @@ class Deck(BaseModel):
 
 @pytest.fixture
 def pact():
-    _pact = Consumer('Consumer').has_pact_with(Provider('Provider'), version='3.0.0')
-    return _pact
+    return Consumer('Consumer') \
+        .has_pact_with(Provider('Provider'),
+                       host_name='localhost',
+                       port=1234,
+                       version='3.0.0')
 
 
-def get_new_deck() -> dict:
-    return requests.get(f'https://deckofcardsapi.com/api/deck/new/shuffle/', params={'deck_count': 1}).json()
+def get_new_deck() -> Deck:
+    deck = requests.get(f'http://localhost:1234/api/deck/new/shuffle/', params={'deck_count': '1'}).json()
+    return Deck(**deck)
 
 
 def test_create_new_deck_with_pact(pact):
@@ -34,16 +38,13 @@ def test_create_new_deck_with_pact(pact):
     pact \
         .given('Dealer needs a new deck') \
         .upon_receiving('a request for a new, shuffled deck') \
-        .with_request('GET', path='/api/deck/new/shuffle/', query={'deck_count': 1}) \
+        .with_request('GET', path='/api/deck/new/shuffle/', query={'deck_count': '1'}) \
         .will_respond_with(200, body=expected)
-
-    # pact.setup()
 
     with pact:
         result = get_new_deck()
 
-    # pact.verify()
-    assert result == expected
+    assert result.deck_id == 'vvp7djnpqyax'
 
 
 def test_create_new_shuffled_deck(api):
@@ -54,4 +55,7 @@ def test_create_new_shuffled_deck(api):
         shuffled=True
     )
     response = api.get(f'{BASE_URL}/new/shuffle/?deck_count=1')
-    assert Deck(**response.json()) == expected_deck
+    deck = Deck(**response.json())
+    assert deck.deck_id == ''
+    assert deck.success
+    assert deck.shuffled
