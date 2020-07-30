@@ -4,3 +4,8 @@ image:
 tasks:
   - init: pipenv install -e .
     command: pipenv shell
+
+vscode:
+  extensions:
+    - hbenl.vscode-test-explorer@2.19.1:GtY0wSp3pjUeyKXi8mFMnQ==
+    - littlefoxteam.vscode-python-test-adapter@0.4.5:AjFDI5oxInml/vtCNspL6w== 
